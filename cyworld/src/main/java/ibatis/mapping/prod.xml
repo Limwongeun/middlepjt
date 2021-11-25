@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="cy">
+	<!-- 
+		typeAlais는 각 쿼리문을 작성하는 xml문서에 선언할 수 있다.
+		이 때 sqlMapConfig.xml문서에 구성한 alias와
+		쿼리문을 작성하는 xml문서의 alias는 이름이 중복되면 안된다. 
+	 -->
+
+	
+	<select id="getBgmImg" resultClass="prodImgVo">
+	select a.prod_id, a.prod_url from prod_Img a, prod b 
+	where a.prod_id like 'b0%' and a.prod_id = b.prod_id  
+	order by 1
+	</select>
+
+	<select id="getSkinImg" resultClass="prodImgVo">
+	select a.prod_id, a.prod_url from prod_Img a, prod b 
+	where a.prod_id like 's0%' and a.prod_id = b.prod_id and b.prod_price != 0 
+	order by 1
+	</select>
+
+	<select id="getMinimiImg" resultClass="prodImgVo">
+	select a.prod_id, a.prod_url from prod_Img a, prod b 
+	where a.prod_id like 'm0%' and a.prod_id = b.prod_id and b.prod_price != 0 
+	order by 1
+	</select>
+
+	<select id="getRoomImg" resultClass="prodImgVo">
+	select a.prod_id, a.prod_url from prod_Img a, prod b 
+	where a.prod_id like 'r0%' and a.prod_id = b.prod_id and b.prod_price != 0 
+	order by 1
+	</select>
+	
+	<select id="getBgmNm" resultClass="prodVo">
+	select * from prod where prod_id like 'g0%' and prod_price != 0 order by 1
+	</select>
+
+	<select id="getSkinNm" resultClass="prodVo">
+	select * from prod where prod_id like 's0%' and prod_price != 0 order by 1
+	</select>
+
+	<select id="getMinimiNm" resultClass="prodVo">
+	select * from prod where prod_id like 'm0%' and prod_price != 0 order by 1
+	</select>
+
+	<select id="getRoomNm" resultClass="prodVo">
+	select * from prod where prod_id like 'r0%' and prod_price != 0 order by 1
+	</select>
+	
+	<select id="getBgmDotori" resultClass="prodVo">
+	select * from prod where prod_id like 'g0%' and prod_price != 0 order by 1
+	</select>
+	
+	<select id="getSkinDotori" resultClass="prodVo">
+	select * from prod where prod_id like 's0%' and prod_price != 0 order by 1
+	</select>
+
+	<select id="getMinimiDotori" resultClass="prodVo">
+	select * from prod where prod_id like 'm0%' and prod_price != 0 order by 1
+	</select>
+
+	<select id="getRoomDotori" resultClass="prodVo">
+	select * from prod where prod_id like 'r0%' and prod_price != 0 order by 1
+	</select>
+	
+</sqlMap>
+	

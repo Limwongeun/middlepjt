@@ -1,0 +1,47 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100&display=swap');
+* {margin: 0; padding: 0; box-sizing: border-box;}
+body {
+   font-family: 'Noto Sans KR', sans-serif;
+/*    display: flex; */
+   justify-content: right;
+   align-items: center;
+   text-align:center;
+   background-color: rgba(255,255,255.1);
+/*    height: 100vh; */ 
+}
+
+/* body::before { */
+/*    content: ""; */
+/*    position: absolute; z-index: 1; */
+/*    top: 0; right: 0; bottom: 0; left: 0; */
+/*    background-color: rgba(255,255,255.1);  */
+/* } */
+.mini-form{position: relative; z-index: 2;}
+.mini-form h1 {
+   font-size: 28px; color: black;
+   text-align: center;
+   margin-top: 60px;
+}
+.int-area input:focus + label,
+.int-area input:valid + label{
+   top: -2px;
+   font-size: 13px; color: #FE9A2E;
+}
+.btn-area {margin-top: 0 auto 0;}
+.btn-area button{
+   width:  250px; height: 50px;
+   background: #FE9A2E;
+   color: #fff;
+   font-size: 20px;
+   border: none;
+   border-radius: 25px;
+}
+.caption{
+   margin-top: 20px;
+   text-align: center;
+}
+.caption a{
+   font-size: 15px; color: #999;
+   text-decoration: none;
+}

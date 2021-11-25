@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="home">
+
+	<!-- 
+		Map을 파라미터로 받아서 처리할 때 변수명은 Map의 key값으로 한다.
+		
+		파라미터로 가져온 값을 컬럼명등의 자리에 사용할 경우에는 달러($)기호를 사용해서
+		나타낸다. 예) $변수명$  또는  $key값$
+		
+	 -->
+
+		 <select resultClass="String" parameterClass="String" id="getHomeId">select home_id from home where mem_id = #memId# </select>
+
+		<select resultClass="homeVo" parameterClass="String" id="getHomeInfo">select * from home where mem_id = #memId# </select>
+		<!-- 
+		map.put("homeId", homeId);
+		map.put("imgName", imgName);
+		 -->
+		<update parameterClass="map" id="profileImgUpdate">update home set home_pic =('../images/'||#img_name#) where home_id = #home_id# </update>
+		 
+		 <update parameterClass="map" id="updateProfile">update home set home_text = #newText# where home_id= #homeId# </update>
+		 
+ 		 <insert parameterClass="String" id="newMem">INSERT INTO home (home_id,home_pic,mem_id) VALUES ('HP0'||to_char(home_no_seq.nextval),'../images/home_img2.png',#newMem#) </insert>
+		 
+		 
+		
+</sqlMap>
+	

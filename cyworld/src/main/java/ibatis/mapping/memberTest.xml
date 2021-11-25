@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+   PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="member">
+
+
+	
+	<!-- parameterClass : sqlMapConfig에 적은 typeAlias alias="memberVO" <요놈을 적으면된다 -->
+
+	<select id="loginCheck" parameterClass="memberVO" resultClass="String">
+		select count(*) from member
+		where mem_id = #mem_id# and mem_pass= #mem_pass#
+		
+	</select>
+	
+	<select id="idCheck" resultClass="string" parameterClass="string">
+  		SELECT COUNT(MEM_ID) FROM MEMBER WHERE MEM_ID = #id#
+  	</select>
+	
+  <insert id="insertMember" parameterClass="memberVO">
+   insert into member
+   (
+       mem_id, mem_pass, mem_name, mem_bir, mem_gender,
+       mem_tel, mem_mail, mem_dotori, mem_addr1, mem_addr2, mem_zip
+    )
+   values(
+       #mem_id#, #mem_pass#, #mem_name#, #mem_bir#, #mem_gender#,
+       #mem_tel#, #mem_mail#, 300, #mem_addr1#, #mem_addr2#, #mem_zip#
+    )
+  </insert>
+  
+<!--        <select id="getMemInfo" parameterClass="String" resultClass="memberVO"> -->
+<!--        select * from member where mem_id = #memId# -->
+<!--        </select> -->
+
+		<select id="getMemInfo" parameterClass="String" resultClass="memberVO">
+       	select mem_id, mem_pass, mem_name, TO_CHAR(mem_bir,'YYYY-MM-DD') AS mem_bir, mem_gender,
+       		   mem_tel, mem_mail, mem_dotori, mem_addr1, mem_addr2, mem_zip
+        from member where mem_id = #memId#
+       </select>
+       
+       <update id="updateMember" parameterClass="memberVO" >
+		update member
+		set mem_tel = #mem_tel#,
+		    mem_pass = #mem_pass#,
+		    mem_mail = #mem_mail#,
+		    mem_addr1 = #mem_addr1#,
+		    mem_addr2 = #mem_addr2#,
+		    mem_zip = #mem_zip#
+		where mem_id = #mem_id#
+       </update>
+       
+       <update id="setDotori" parameterClass="String">
+      UPDATE member
+         SET
+             mem_dotori = mem_dotori - (select sum(order_price) from ordered where mem_id = #mem_id# and order_set = 'N')
+         WHERE
+             mem_id = #mem_id# 
+         and mem_dotori >= (select order_price from ordered where mem_id = #mem_id# and order_set = 'N')
+   </update>
+   
+   <update id="orderDotori" parameterClass="map">
+       UPDATE member
+          SET
+              mem_dotori = mem_dotori + (select dotori_qty from dotori_info where dotori_id = '4')
+        WHERE
+          mem_id = #mem_id#
+   </update>
+
+   <select id="getDotori" parameterClass="String" resultClass="int">
+   		select mem_dotori from member where mem_id = #mem_id#
+   </select>       
+   
+
+   <!-- 
+      Map을 파라미터로 받아서 처리할 때 변수명은 Map의 key값으로 한다.
+      
+      파라미터로 가져온 값을 컬럼명등의 자리에 사용할 경우에는 달러($)기호를 사용해서
+      나타낸다. 예) $변수명$  또는  $key값$
+      
+    -->
+<!--    <update id="memberUpdate2" parameterClass="java.util.Map"> -->
+<!--       update mymember set  $field$ = #data#  -->
+<!--       where mem_id = #memId# -->
+<!--    </update> -->
+   
+<!--    <insert id="insertMember" parameterClass="memberVo"> -->
+<!--       insert into mymember (mem_id, mem_pass, mem_name, mem_tel, mem_addr)  -->
+<!--       values (#mem_id#, #mem_pass#, #mem_name#, #mem_tel#, #mem_addr#) -->
+<!--    </insert> -->
+   
+<!--    <delete id="deleteMember" parameterClass="String"> -->
+<!--       delete from mymember where mem_id = #mem_id# -->
+<!--    </delete> -->
+   
+<!--    <update id="updateMember" parameterClass="memberVo"> -->
+<!--       update mymember set  -->
+<!--          mem_pass=#mem_pass#,  -->
+<!--          mem_name=#mem_name#,  -->
+<!--          mem_tel=#mem_tel#,  -->
+<!--          mem_addr=#mem_addr#  -->
+<!--       where mem_id=#mem_id# -->
+<!--    </update> -->
+   
+<!--    <select id="getAllMember" resultClass="memberVo"> -->
+<!--       select * from mymember -->
+<!--    </select> -->
+
+<!--    <select id="getMember" parameterClass="string" resultClass="memberVo"> -->
+<!--       select * from mymember where mem_id = #mem_id# -->
+<!--    </select> -->
+   
+<!--    <select id="getMemberCount" parameterClass="String" resultClass="int"> -->
+<!--       select count(*) cnt from mymember where mem_id = #mem_id# -->
+<!--    </select> -->
+
+</sqlMap>
+   

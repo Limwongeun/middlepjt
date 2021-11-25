@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE sqlMap
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="board" >
+
+	<select id="countBoard" parameterClass="String" resultClass="int">
+		select count (*) from board where home_id= #homeId# and to_char(board_date, 'YYYY/MM/DD')= to_char(sysdate, 'YYYY/MM/DD')
+	</select>
+
+	<insert id="insertBoard" parameterClass="boardVO">
+		insert into board(board_no, board_writer, home_id, board_title, board_text, board_date, category_no)
+		values((select nvl(max(board_no),0)+1 from board), #board_writer#, #home_id#,#board_title#, #board_text#, sysdate, 1)
+	</insert>
+	
+	<select id="getBoard" resultClass="boardVO" parameterClass="int">
+		select * from board where board_no=#board_no# 
+	</select>
+	
+	<select id="boardList" resultClass="boardVO" parameterClass="String">
+		select * from board where home_id=#home_id# and category_no=1
+	</select>
+	
+	<update id="updateBoard" parameterClass="boardVO">
+		update board set board_title=#board_title#, board_text=#board_text# where board_no=#board_no# 
+	</update>
+	
+	<delete id="deleteBoard" parameterClass="int">
+		delete from board where board_no=#board_no#
+	</delete> 
+	
+	<!-- 
+	vo.setBoard_no(board_no);
+	vo.setComment_gu("1");
+	vo.setMem_id(mem_id);
+	vo.setComment_text(comment_text);
+	 -->
+	<insert id="insertComment" parameterClass="replyVO">
+		<selectKey keyProperty="comment_no" resultClass="int">
+			select nvl(max(comment_no),0) + 1 from reply
+		</selectKey>
+		<isNotEqual property="reply_no" compareValue="0">
+		insert into reply(comment_no, reply_no, board_no, comment_gu, comment_date, mem_id, comment_text)
+		values(#comment_no#, #reply_no#, #board_no#, #comment_gu#, sysdate, #mem_id#, #comment_text#)
+		</isNotEqual>
+		
+		<isEqual property="reply_no" compareValue="0">
+		insert into reply(comment_no, reply_no, board_no, comment_gu, comment_date, mem_id, comment_text)
+		values(#comment_no#, #comment_no#, #board_no#, #comment_gu#, sysdate, #mem_id#, #comment_text#)
+		</isEqual>
+	</insert>
+	
+	<select id="getReply" resultClass="replyVO" parameterClass="map">
+		select board_no, nvl(reply_no,0) reply_no, comment_gu, 
+			comment_date, comment_no,  mem_id,  comment_text 
+		from reply 
+		where comment_no=#comment_no# and board_no=#board_no#
+	</select>
+	
+	<select id="getAllReply" resultClass="replyVO" parameterClass="int">
+	select board_no, nvl(reply_no,0) reply_no, comment_gu, 
+			comment_date, comment_no,  mem_id,  comment_text 
+		from reply where board_no=#board_no#
+		order by REPLY_NO desc, COMMENT_GU asc, COMMENT_DATE desc
+	</select>
+	
+	<update id="updateReply" parameterClass="replyVO">
+		update reply set comment_text=#comment_text# where comment_no=#comment_no#
+	</update>
+	
+	<delete id="deleteReply" parameterClass="int">
+		delete from reply where comment_no=#comment_no#
+	</delete>
+	
+	<select id="getUpdateSelectReply" resultClass="replyVO" parameterClass="int">
+		select comment_text from reply where comment_no=#comment_no#
+	</select>
+</sqlMap>
+	

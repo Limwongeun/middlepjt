@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+   PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="friend">
+
+
+   <select id="getAllFriend" parameterClass="String" resultClass="memFriendVo"><!-- FriendVO -->
+      select a.mem_name, b.friend_name from member a, friend b where a.mem_id = b.mem_id and b.home_id = #home_id#
+   </select> 
+   
+   <select id="friendList" parameterClass="String" resultClass="memFriendVo">
+      select a.mem_name, a.mem_id, b.home_pic from member a, home b 
+      where a.mem_id = b.mem_id and a.mem_id in (select mem_id from friend where home_id = #home_id#)
+   </select>
+   
+   <!-- 일촌찾기(파도타기)-->
+   <select id="bestFriendList" parameterClass="String" resultClass="memFriendVo">
+	    SELECT DD.*, CC.HOME_PIC FROM HOME CC,
+	   (select a.mem_name, a.mem_id, b.friend_name from member a, friend b, home c where a.mem_id = b.mem_id and b.home_id = c.home_id and c.home_id =#home_id# and b.friend_req= 'Y') DD
+	   WHERE CC.MEM_ID = DD.MEM_ID
+   </select>
+   
+   <select id="searchFriend" parameterClass="memFriendVo" resultClass="memFriendVo">
+         select b.home_pic, a.mem_name, a.mem_id, b.home_text, b.home_id from member a, home b where a.mem_id = b.mem_id and (a.mem_id !=#mem_id# and a.mem_name like '%'||#mem_name#||'%')
+   </select>
+   
+   <delete id="deleteFriend" parameterClass="memFriendVo">
+      delete from friend where (mem_id=#mem_id# and home_id=#home_id#) 
+      or (home_id = (select home_id from home where mem_id= #mem_id#) and mem_id = (select mem_id from home where home_id = #home_id#))
+   </delete>
+   
+   <!-- 일촌신청시 친구행 insert(친구여부는 기본값 'n'로 자동삽입) -->
+   <insert id="requestFriend" parameterClass="memFriendVo">
+   		insert into friend(home_id, mem_id, friend_name) values(#home_id# ,#mem_id#, #friend_name#)
+   </insert>
+   <!-- 내홈피에서 친구여부가 'n'값인 친구행 가져오기 , 친구를 요청하는 사람의 이름 +친구요청을 받은 사람의 정보-->
+   	<select id="sendFriend" parameterClass="memFriendVo" resultClass="memFriendVo">
+	   	select a.mem_name, b.* from member a, friend b where a.mem_id=b.mem_id and b.home_id=#home_id# and b.friend_req = 'N'
+   	</select>
+   	<!-- 친구 수락을 클릭시 친구여부가 'n'에서 'y'로 업데이트/ 첫번째 친구hp, 내아이디/두번째 내홈피, 친구아이디 //각자 업데이트 해야할듯...-->
+   	<update id="acceptFriend" parameterClass="memFriendVo">
+   		update friend set friend_req = 'Y' where (home_id=#home_id# and mem_id=#mem_id#)
+   	</update>
+   	<!-- 친구 수락을 거절할 시 n인 친구행이 삭제된다. -->
+	<delete id="deleteAccept" parameterClass="memFriendVo">
+		delete from friend where friend_req ='N' and home_id=#home_id# and mem_id=#mem_id#
+	</delete>   	
+   	
+   	<select id="memInfo" parameterClass="String" resultClass="homeVo">
+   		select * from home where mem_id = #mem_id#
+   	</select>
+   	
+   		
+<!--    <select id="requestFriend" parameterClass="String" resultClass ="friendVo" > -->
+<!--    		select * from friend where home_id=#home_id# and friend_req = 'N' -->
+<!--    </select> -->
+   
+<!-- 투데이수/토털수 증가 쿼리 -->   
+   <insert id="insertCount" parameterClass="String">
+   		insert into count_num(COUNT_ID, HOME_ID) values(count_no_seq.nextval, #home_id#)
+   </insert>
+   
+   <select id="todayCount"  parameterClass="String" resultClass="int" >
+   		 select count(*) from count_num where to_char(todaydate, 'YYYY/MM/DD') = to_char(sysdate,'YYYY/MM/DD') and home_id=#home_id#
+   </select>
+
+   <select id="totalCount"  parameterClass="String" resultClass="int">
+   		select count(*) from count_num where home_id=#home_id#
+   </select>
+
+<!-- 회원검색 -->
+	<select id="memberInfo" parameterClass="String" resultClass="memFriendVo">
+		select * from member where mem_id= #mem_id#
+	</select>
+
+<!--    <delete id="deleteFriend2" parameterClass="String"> -->
+<!--       delete from friend where home_id = (select home_id from home where mem_id= #mem_id#) -->
+<!--         and mem_id = (select mem_id from home where home_id = #home_id#) -->
+<!--    </delete> -->
+</sqlMap>

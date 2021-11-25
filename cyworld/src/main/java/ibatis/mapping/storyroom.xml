@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap 
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="story">
+
+	<!-- 해당 홈아이디의 적용Y 체크된 스토리룸 이미지 -->
+	<select id="getRoomImg" parameterClass="String" resultClass="storyVO">
+	select prod_url from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId# and prod_set='Y') and substr(prod_url,4,1)='r'
+	</select>
+	
+	<select id="getMinimiImg" parameterClass="String" resultClass="storyVO">
+	select prod_url from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId# and prod_set='Y') and substr(prod_url,4,2)='mi'
+	</select>
+	
+	<select id="getSkinImg" parameterClass="String" resultClass="storyVO">
+	select prod_url from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId# and prod_set='Y') and substr(prod_url,4,1)='s'
+	</select>
+	
+	<select id="getmp3" parameterClass="String" resultClass="storyVO">
+	select prod_url from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId# and prod_set='Y') and substr(prod_url,4,2)='mp'
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<!-- 해당 홈아이디가 구매한 상품 목록 이미지 불러오는쿼리 -->
+	<!-- 구입한 미니미 목록 -->
+	<select id="myListMinimi" parameterClass="String" resultClass="storyVO">
+	select * from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId#) and substr(prod_url,4,2)='mi'
+	</select>
+	
+		<!-- 구입한 스킨 목록 -->
+	<select id="myListSkin" parameterClass="String" resultClass="storyVO">
+	select * from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId#) and substr(prod_url,4,1)='s'
+	</select>
+	
+		<!-- 구입한 스토리룸 목록 -->
+	<select id="myListStoryroom" parameterClass="String" resultClass="storyVO">
+	select  * from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId#) and substr(prod_url,4,1)='r'
+	</select>
+	
+		<!-- 구입한 BGM 목록 -->
+	<select id="myListBgm" parameterClass="String" resultClass="storyVO">
+	select * from prod_img where prod_id in(select prod_id from mypage where home_id= #homeId#) and substr(prod_url,4,2)='mp'
+	</select>
+	
+	
+	<!-- 아이템 설정페이지에서 미니미 선택하면 Y로, 나머지 미니미를 N으로 바꾸는 쿼리 -->
+	<update id="changeMinimiY" parameterClass="map">
+	update mypage set prod_set='Y' where home_id=#home_id# and substr(prod_id,1,1)='m' and prod_id=#prod_id#
+	</update>
+	
+	<update id="changeMinimiN" parameterClass="map">
+	update mypage set prod_set='N' where prod_id != #prod_id# and home_id = #home_id# and substr(prod_id,1,1)='m'
+	</update>
+	
+	
+	<!-- 아이템 설정페이지에서 스킨 선택하면 Y로, 나머지 미니미를 N으로 바꾸는 쿼리 -->
+	<update id="changeSkinY" parameterClass="map">
+	update mypage set prod_set='Y' where home_id=#home_id# and substr(prod_id,1,1)='s' and prod_id=#prod_id#
+	</update>
+	
+	<update id="changeSkinN" parameterClass="map">
+	update mypage set prod_set='N' where prod_id != #prod_id# and home_id = #home_id# and substr(prod_id,1,1)='s'
+	</update>
+	
+	
+	<!-- 아이템 설정페이지에서 스토리룸 선택하면 Y로, 나머지 미니미를 N으로 바꾸는 쿼리 -->
+	<update id="changeRoomY" parameterClass="map">
+	update mypage set prod_set='Y' where home_id=#home_id# and substr(prod_id,1,1)='r' and prod_id=#prod_id#
+	</update>
+	
+	<update id="changeRoomN" parameterClass="map">
+	update mypage set prod_set='N' where prod_id != #prod_id# and home_id = #home_id# and substr(prod_id,1,1)='r'
+	</update>
+	
+	
+		<!-- 아이템 설정페이지에서 BGM 선택하면 Y로, 나머지 미니미를 N으로 바꾸는 쿼리 -->
+	<update id="changeMp3Y" parameterClass="map">
+	update mypage set prod_set='Y' where home_id=#home_id# and substr(prod_id,1,1)='g' and prod_id=#prod_id#
+	</update>
+	
+	<update id="changeMp3N" parameterClass="map">
+	update mypage set prod_set='N' where prod_id != #prod_id# and home_id = #home_id# and substr(prod_id,1,1)='g'
+	</update>
+	
+</sqlMap>
+	

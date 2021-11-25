@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+   PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+   "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ordered">
+
+	<insert id="newOrdered" parameterClass="String">
+		INSERT INTO ordered (
+		    order_no,
+		    order_date,
+		    order_set,
+		    mem_id
+		) VALUES (
+		    (select max(order_no) from cart where prod_id = 'cartBasic'),
+		    sysdate,
+		    'N',
+		    #mem_id#
+		)
+	</insert>
+  
+	<update id="addOrdered" parameterClass="String">
+		UPDATE ordered
+		    SET
+		        ORDER_DATE = sysdate,
+		        order_price = (select sum(cart_price) from cart where cart_set = 'N' and order_no in (select order_no from ordered where mem_id = #mem_id#)),
+		        order_set = 'N',
+		        mem_id = #mem_id#
+		WHERE
+		    order_no in (select order_no from ordered where mem_id = #mem_id# and order_set in 'N')
+	</update>
+
+
+	<update id="payOrdered" parameterClass="String">
+		UPDATE ordered
+		    SET
+		        order_set = 'Y',
+		        order_date = sysdate
+		WHERE
+		        mem_id = #mem_id# and
+    			order_set = 'N'
+  	</update>
+  	
+  	<select id="myOrder" parameterClass="String" resultClass="orderedVo">
+  		select * from ordered where mem_id = #memId# and order_set = 'N'
+  	</select>
+</sqlMap>
+   

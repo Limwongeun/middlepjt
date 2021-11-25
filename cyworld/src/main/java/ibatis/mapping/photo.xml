@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE sqlMap
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="photo">
+
+	<insert id="insertBoard" parameterClass="photoVo">          <!-- ('../images/'||#img_name#) -->
+		insert into board(board_no, board_writer, home_id, board_title, board_text, board_date, board_photo, category_no)
+		values((select nvl(max(board_no),0)+1 from board), #board_writer#, #home_id#,#board_title#, #board_text#, sysdate, ('../images/'||#board_photo#), '2')
+	</insert>
+	
+	<select id="getBoard" resultClass="photoVo" parameterClass="int">
+		select * from board where board_no=#board_no# and category_no ='2'
+	</select>
+	
+	<select id="boardList" resultClass="photoVo" parameterClass="String">
+		select * from board where category_no ='2' and home_id =#home_id#
+	</select>
+	
+	<update id="updateBoard" parameterClass="photoVo">
+		update board set board_title=#board_title#, board_text=#board_text# where board_no=#board_no# 
+	</update>
+	
+	<delete id="deleteBoard" parameterClass="int">
+		delete from board where board_no=#board_no#
+	</delete> 
+	
+	<!-- 
+	vo.setBoard_no(board_no);
+	vo.setComment_gu("1");
+	vo.setMem_id(mem_id);
+	vo.setComment_text(comment_text);
+	 -->
+	<insert id="insertComment" parameterClass="replyVO">
+		<selectKey keyProperty="comment_no" resultClass="int">
+			select nvl(max(comment_no),0) + 1 from reply
+		</selectKey>
+	
+		insert into reply(comment_no,board_no, comment_gu, comment_date, mem_id, comment_text)
+		values(#comment_no#, #board_no#, #comment_gu#, sysdate, #mem_id#, #comment_text#)
+	</insert>
+	
+	<select id="getReply" resultClass="replyVO" parameterClass="map">
+		select board_no, nvl(reply_no,0) reply_no, comment_gu, 
+			comment_date, comment_no,  mem_id,  comment_text 
+		from reply 
+		where comment_no=#comment_no# and board_no=#board_no#
+	</select>
+	
+	<select id="getAllReply" resultClass="replyVO" parameterClass="int">
+	select board_no, nvl(reply_no,0) reply_no, comment_gu, 
+			comment_date, comment_no,  mem_id,  comment_text 
+		from reply where board_no=#board_no#
+	</select>
+	
+	<update id="updateReply" parameterClass="replyVO">
+		update reply set comment_text=#comment_text# where comment_no=#comment_no#
+	</update>
+	
+	<delete id="deleteReply" parameterClass="int">
+		delete from reply where comment_no=#comment_no#
+	</delete>
+	
+	<select id="getUpdateSelectReply" resultClass="replyVO" parameterClass="int">
+		select comment_text from reply where comment_no=#comment_no#
+	</select>
+</sqlMap>
+	

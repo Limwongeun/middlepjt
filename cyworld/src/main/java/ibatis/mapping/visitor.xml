@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap
+	PUBLIC "-ibatis.apache.org//DTD SQL Map 2.0//EN"
+	"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	
+<sqlMap namespace="visitor">
+
+
+
+   <insert id="insertVisitor" parameterClass="visitorVo">
+      insert into visitor(visitor_no, visitor_text, home_id, visitor_date, visitor_set, mem_id)
+      values((select nvl(max(visitor_no),0)+1 from visitor), #visitor_text#, #home_id#, sysdate, #visitor_set#, #mem_id#)
+   </insert>
+
+   <select id="visitorList" resultClass="visitorVo" parameterClass="String">
+      select * from visitor where home_id=#home_id# order by visitor_no desc
+   </select>
+
+   <update id="updateVisitor" parameterClass="visitorVo">
+      update visitor set visitor_text=#visitor_text# where visitor_no=#visitor_no#
+   </update>
+
+   <delete id="deleteVisitor" parameterClass="int">
+      delete from visitor where visitor_no=#visitor_no#
+   </delete>
+   
+   <select id="selectVisitor" resultClass="visitorVo" parameterClass="int">
+      select visitor_text from visitor where visitor_no=#visitor_no#
+   </select>
+   
+   <update id="updateSecret" parameterClass="visitorVo">
+      update visitor set visitor_set=#visitor_set# where visitor_no=#visitor_no#
+   </update>
+   
+   <select id="visitorMinimi" parameterClass="String" resultClass="String">
+          select a.prod_url from prod_img a, mypage b 
+    where a.prod_id = b.prod_id
+      and a.prod_id = (select prod_id from mypage 
+                     where home_id = (select home_id from home where mem_id = #mem_id#) 
+                     and prod_set = 'Y' and prod_id like 'm0%')    
+   </select>
+</sqlMap>
